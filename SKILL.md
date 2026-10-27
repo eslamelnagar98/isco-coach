@@ -33,6 +33,8 @@ Rules:
 - Skip when the message is only code, a log, or an error with no user text.
 - Focus on mistakes that change meaning or sound unnatural. Ignore tiny things nobody would notice.
 - Prefer natural wording over formal wording. Do not make the sentence sound fancy.
+- Never "fix" abbreviations, acronyms or team terms (DSU, PBI, PR, ADR, SLA, and similar). Do not ask to spell them out. Fix only real grammar, spelling or unnatural wording.
+- Do not give two alternative fixes for the same phrase. Pick one.
 
 ## 2. Command explanation (after the answer)
 

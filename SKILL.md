@@ -29,7 +29,7 @@ Fix: "how i can" to "how can I" (in a question, the helper verb comes first)
 Rules:
 - Show only the 1 or 2 most useful fixes, never a long list.
 - If the same mistake repeats, name the pattern once, for example "missing article before singular nouns".
-- If the prompt is already clear, write nothing. Do not praise, do not invent fixes.
+- If the prompt is already correct, show one more natural version if there is a clearly better one. Otherwise write one line: "Prompt OK". Do not praise and do not invent fixes. This line also lets Isco see that the skill ran.
 - Skip when the message is only code, a log, or an error with no user text.
 - Focus on mistakes that change meaning or sound unnatural. Ignore tiny things nobody would notice.
 - Prefer natural wording over formal wording. Do not make the sentence sound fancy.
@@ -37,6 +37,8 @@ Rules:
 ## 2. Command explanation (after the answer)
 
 Goal: Isco can read the command and understand it in 10 seconds. This is not a lecture.
+
+Explain only commands that Isco is meant to run or copy. Do not explain commands you ran yourself with your tools to read files, git history or status. Those are not part of the answer.
 
 Per command:
 - One line: what it does and why you run it.

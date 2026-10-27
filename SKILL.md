@@ -42,21 +42,36 @@ Goal: Isco can read the command and understand it in 10 seconds. This is not a l
 
 Explain only commands that Isco is meant to run or copy. Do not explain commands you ran yourself with your tools to read files, git history or status. Those are not part of the answer.
 
-Per command:
-- One line: what it does and why you run it.
-- Then only the parts that are not obvious, as short notes: flag, meaning.
-- One warning line only if the command is risky (force push, reset --hard, rm -rf, DELETE without WHERE, docker prune, anything that changes remote or production state), with the safer option.
+Per command, use this fixed shape:
+
+1. Purpose: one line. What it does and why you run it.
+2. Parts: one short line for every part of the command that is not self-evident: the subcommand, each flag, each argument. Write "part: meaning". Give the long form of a short flag when it exists (-3 is --max-count=3). Maximum 5 part lines. If there are more, explain the 5 that matter most.
+3. Use it when: one line, only if the situation is not obvious.
+4. Careful: one line, only if the command is risky (force push, reset --hard, rm -rf, DELETE without WHERE, docker prune, anything that changes remote or production state), with the safer option.
 
 Example:
 
+git log -3 --oneline
+Shows the last 3 commits, one short line each.
+- log: shows commit history of the current branch.
+- -3: limit to 3 commits (same as --max-count=3).
+- --oneline: short hash and message only.
+Use when: you want a quick look at recent history.
+
+Another example, risky:
+
 git reset --soft HEAD~1
 Removes the last commit but keeps your changes staged.
---soft: keep changes staged. HEAD~1: one commit back.
+- reset: moves the branch pointer to another commit.
+- --soft: keep the changes staged, do not touch files.
+- HEAD~1: one commit before the current one.
 Careful: if already pushed, you need git push --force-with-lease.
 
 Rules:
-- Trivial commands (cd, ls, mkdir, dotnet build) get a half line or nothing.
-- Do not explain a flag the answer does not use.
+- Trivial commands (cd, ls, mkdir, dotnet build) get the purpose line only, or nothing.
+- Explain only parts that appear in the command. Never explain flags that are not used.
+- Never add history, theory or alternatives the user did not ask for. The goal is to understand this command, not to learn the whole tool.
+- A command that appears again later is explained once.
 - Pipelines: one line per stage, only if there are three or more stages.
 - Scripts, Dockerfile, YAML: explain by block, not by line.
 - Mention bash vs PowerShell differences only when the user could hit them.

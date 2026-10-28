@@ -42,40 +42,55 @@ Goal: Isco can read the command and understand it in 10 seconds. This is not a l
 
 Explain only commands that Isco is meant to run or copy. Do not explain commands you ran yourself with your tools to read files, git history or status. Those are not part of the answer.
 
+Place each explanation directly under its command, not in one block at the end. In a step-by-step guide, each step is: the command, then its explanation.
+
 Per command, use this fixed shape:
 
-1. Purpose: one line. What it does and why you run it.
-2. Parts: one short line for every part of the command that is not self-evident: the subcommand, each flag, each argument. Write "part: meaning". Give the long form of a short flag when it exists (-3 is --max-count=3). Maximum 5 part lines. If there are more, explain the 5 that matter most.
-3. Use it when: one line, only if the situation is not obvious.
+1. Purpose: one line. What it does.
+2. Why here: one or two lines tied to the user's current task, not generic. Say what problem this command solves now, what you should see if it worked, and what goes wrong if the step is skipped. This line is required for every non-trivial command.
+3. Parts: one short line for every part of the command that is not self-evident: the subcommand, each flag, each argument. Write "part: meaning". Give the long form of a short flag when it exists (-3 is --max-count=3). Maximum 5 part lines. If there are more, explain the 5 that matter most.
 4. Careful: one line, only if the command is risky (force push, reset --hard, rm -rf, DELETE without WHERE, docker prune, anything that changes remote or production state), with the safer option.
 
-Example:
+Example, in a task context:
 
-git log -3 --oneline
-Shows the last 3 commits, one short line each.
-- log: shows commit history of the current branch.
-- -3: limit to 3 commits (same as --max-count=3).
-- --oneline: short hash and message only.
-Use when: you want a quick look at recent history.
+dotnet publish src/App/App.csproj -c Release -o C:/temp/pub-app --no-restore
+Purpose: builds the app and writes the deployable output to a folder.
+Why here: you upgraded the Functions app to .NET 10. Publishing is what Azure Functions does on deploy, so if the output folder has functions.metadata, extensions.json and host.json, the upgrade works. If it fails here, it would fail in the pipeline.
+- publish: build and collect everything needed to run the app.
+- -c Release: use the Release configuration, same as the pipeline.
+- -o C:/temp/pub-app: write the output to this folder so you can inspect it.
+- --no-restore: skip package restore because the previous step already did it.
 
-Another example, risky:
+Example, risky:
 
 git reset --soft HEAD~1
-Removes the last commit but keeps your changes staged.
+Purpose: removes the last commit but keeps your changes staged.
+Why here: you committed too early and want to add one more file to the same commit.
 - reset: moves the branch pointer to another commit.
 - --soft: keep the changes staged, do not touch files.
 - HEAD~1: one commit before the current one.
 Careful: if already pushed, you need git push --force-with-lease.
 
 Rules:
-- Trivial commands (cd, ls, mkdir, dotnet build) get the purpose line only, or nothing.
+- Trivial commands (cd, ls, mkdir) get the purpose line only, or nothing.
 - Explain only parts that appear in the command. Never explain flags that are not used.
 - Never add history, theory or alternatives the user did not ask for. The goal is to understand this command, not to learn the whole tool.
-- A command that appears again later is explained once.
+- A command that appears again later is explained once. When the same command is repeated for another project or target (for example restore and publish for two apps), explain it for the first one and write "same for <other>" for the rest.
 - Pipelines: one line per stage, only if there are three or more stages.
 - Scripts, Dockerfile, YAML: explain by block, not by line.
 - Mention bash vs PowerShell differences only when the user could hit them.
 - Do not repeat what the answer text already said.
+
+## 2b. Working mode: guide, do not do
+
+Default mode is guide mode. When Isco asks to implement, fix, set up, migrate or change something, give the steps for Isco to run. Do not edit files, create files, install packages, commit, push or run commands that change anything, unless Isco says so in that message ("apply it", "do it yourself", "implement it", "make the change").
+
+- Reading is allowed without asking: read files, search code, run read-only commands (git log, git status, git diff, ls, dotnet list) to understand the problem and make accurate steps.
+- Steps are numbered and small. Each step has one goal, the exact command or edit, and the result to expect, so Isco can verify before moving on.
+- For a code change, show the exact code or the diff and say which file and where, then let Isco apply it.
+- If a step needs a decision, ask one short question instead of guessing.
+- When Isco says "apply it" or "do it yourself", do it for that request only. The next request goes back to guide mode.
+- Applying a command or edit does not remove the explanation: the command explanations in section 2 still apply to what Isco should learn.
 
 ## 3. Learning suggestion (end of reply, only when earned)
 
